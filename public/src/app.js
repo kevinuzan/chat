@@ -14,24 +14,37 @@ while (!myName || myName.trim() === "") {
 displayName.innerText = myName;
 
 // Definindo a sala única (Pode ser fixa para um chat global ou dinâmica)
-const currentRoom = "chat_geral"; 
+const currentRoom = "chat_geral";
 
 socket.emit('joinRoom', currentRoom);
 
 // --- FUNÇÕES DE RENDERIZAÇÃO ---
+// Seleciona o elemento de áudio
+const notifSound = document.getElementById('notif-sound');
+
 function renderMessage(data) {
+    const isMine = data.sender === myName;
+
     const div = document.createElement('div');
-    // Verifica se a mensagem é minha para alinhar à direita
-    div.className = `message ${data.sender === myName ? 'mine' : ''}`;
-    
+    div.className = `message ${isMine ? 'mine' : ''}`;
+
     let content = `<strong>${data.sender}</strong><br>${data.text || ''}`;
     if (data.image) {
         content += `<br><img src="${data.image}" />`;
     }
-    
+
     div.innerHTML = content;
     chatContainer.appendChild(div);
     chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    // --- LÓGICA DO BIP ---
+    // Só toca o som se a mensagem NÃO for minha
+    if (!isMine) {
+        // .play() retorna uma promessa, tratamos o erro caso o browser bloqueie
+        notifSound.play().catch(error => {
+            console.log("O som foi bloqueado pelo navegador até que haja uma interação.");
+        });
+    }
 }
 
 // --- EVENTOS DO SOCKET ---
@@ -72,6 +85,6 @@ const toBase64 = file => new Promise((resolve, reject) => {
 });
 
 sendBtn.addEventListener('click', send);
-messageInput.addEventListener('keypress', (e) => { 
-    if(e.key === 'Enter') send(); 
+messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') send();
 });
