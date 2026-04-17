@@ -1,21 +1,88 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat</title>
     <style>
-        body { font-family: sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; background: #f0f2f5; }
-        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .message { max-width: 80%; padding: 10px; border-radius: 8px; background: white; align-self: flex-start; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .mine { align-self: flex-end; background: #dcf8c6; }
-        img { max-width: 200px; border-radius: 5px; display: block; margin-top: 5px; }
-        #input-area { padding: 15px; background: white; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input[type="text"] { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; }
-        button { border: none; background: #007bff; color: white; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
-        #file-label { cursor: pointer; padding: 10px; background: #eee; border-radius: 50%; }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #f0f2f5;
+        }
+
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            background: white;
+            align-self: flex-start;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .mine {
+            align-self: flex-end;
+            background: #dcf8c6;
+        }
+
+        img {
+            max-width: 200px;
+            border-radius: 5px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        #input-area {
+            padding: 15px;
+            background: white;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        button {
+            border: none;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        #file-label {
+            cursor: pointer;
+            padding: 10px;
+            background: #eee;
+            border-radius: 50%;
+        }
     </style>
 </head>
+
 <body>
+    <div id="user-badge" style="padding: 5px 20px; font-size: 0.8em; color: #666; background: #eee;">
+        Conectado como: <span id="display-name">...</span>
+    </div>
+
     <div id="chat-container"></div>
     <div id="input-area">
         <label id="file-label">📷<input type="file" id="imageInput" hidden accept="image/*"></label>
@@ -26,4 +93,5 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/src/app.js"></script>
 </body>
+
 </html>
