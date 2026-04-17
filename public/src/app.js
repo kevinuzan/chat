@@ -88,3 +88,42 @@ sendBtn.addEventListener('click', send);
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') send();
 });
+
+// Selecionando os elementos do modal
+const modal = document.getElementById('imageModal');
+const expandedImg = document.getElementById('expandedImg');
+
+// Função para abrir o modal
+function openModal(src) {
+    expandedImg.src = src;
+    modal.style.display = "flex";
+}
+
+// Fechar o modal ao clicar em qualquer lugar dele
+modal.addEventListener('click', () => {
+    modal.style.display = "none";
+});
+
+// ATUALIZE sua função renderMessage para incluir o 'onclick'
+function renderMessage(data) {
+    const isMine = data.sender === myName;
+    const div = document.createElement('div');
+    div.className = `message ${isMine ? 'mine' : ''}`;
+    
+    let content = `<strong>${data.sender}</strong><br>${data.text || ''}`;
+    
+    if (data.image) {
+        // Adicionamos um cursor de lupa e a função de clique
+        content += `<br><img src="${data.image}" 
+                         style="cursor: zoom-in;" 
+                         onclick="openModal('${data.image}')" />`;
+    }
+    
+    div.innerHTML = content;
+    chatContainer.appendChild(div);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    if (!isMine) {
+        notifSound.play().catch(() => {});
+    }
+}
