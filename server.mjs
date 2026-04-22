@@ -72,7 +72,7 @@ async function startServer() {
                 // Busca histórico usando o driver nativo
                 const history = await chatColl
                     .find({ room: room })
-                    .sort({ timestamp: -1 })
+                    .sort({ timestamp: 1 })
                     .limit(70)
                     .toArray();
                 
