@@ -65,7 +65,19 @@ async function startServer() {
         });
 
         io.on('connection', (socket) => {
-            // ... (evento joinRoom mantém o mesmo) ...
+            
+            socket.on('joinRoom', async (room) => {
+                socket.join(room);
+                
+                // Busca histórico usando o driver nativo
+                const history = await chatColl
+                    .find({ room: room })
+                    .sort({ timestamp: -1 })
+                    .limit(70)
+                    .toArray();
+                
+                socket.emit('chatHistory', history.reverse());
+            });
 
             socket.on('sendMessage', async (data) => {
                 const newMessage = { ...data, timestamp: new Date() };
