@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat</title>
@@ -23,13 +22,31 @@
             gap: 10px;
         }
 
+        /* Divisor de Datas */
+        .date-separator {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .date-separator span {
+            background: #e1f3fb;
+            color: #555;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
         .message {
             max-width: 80%;
-            padding: 10px;
+            padding: 8px 12px;
             border-radius: 8px;
             background: white;
             align-self: flex-start;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 120px;
         }
 
         .mine {
@@ -37,69 +54,132 @@
             background: #dcf8c6;
         }
 
-        img {
-            max-width: 200px;
+        .msg-sender {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 3px;
+            color: #075e54;
+        }
+
+        .msg-text {
+            font-size: 1em;
+            margin-bottom: 15px; /* Espaço para o relógio */
+            word-wrap: break-word;
+        }
+
+        .msg-time {
+            font-size: 0.7em;
+            color: #888;
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+        }
+
+        img.chat-image {
+            max-width: 100%;
+            max-height: 250px;
             border-radius: 5px;
             display: block;
             margin-top: 5px;
+            margin-bottom: 15px;
+            cursor: zoom-in;
+            object-fit: cover;
+        }
+
+        /* Container de Input e Preview */
+        #input-wrapper {
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid #ddd;
+        }
+
+        #preview-container {
+            display: none;
+            padding: 10px 15px;
+            background: #e9e9e9;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+        #preview-container img {
+            max-height: 100px;
+            border-radius: 5px;
+        }
+        #remove-preview {
+            position: absolute;
+            top: 10px;
+            left: 120px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         #input-area {
             padding: 15px;
-            background: white;
             display: flex;
             gap: 10px;
-            border-top: 1px solid #ddd;
+            align-items: center;
         }
 
         input[type="text"] {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 12px;
+            border: none;
             border-radius: 20px;
             outline: none;
+            font-size: 1em;
         }
 
         button {
             border: none;
             background: #007bff;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 20px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         #file-label {
             cursor: pointer;
             padding: 10px;
-            background: #eee;
-            border-radius: 50%;
+            font-size: 1.2em;
+            color: #555;
         }
     </style>
 </head>
-
 <body>
-    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"
-        preload="auto"></audio>
+    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3" preload="auto"></audio>
     <div id="user-badge" style="padding: 5px 20px; font-size: 0.8em; color: #666; background: #eee;">
         Conectado como: <span id="display-name">...</span>
     </div>
 
     <div id="chat-container"></div>
-    <div id="input-area">
-        <label id="file-label">📷<input type="file" id="imageInput" hidden accept="image/*"></label>
-        <input type="text" id="messageInput" placeholder="Digite uma mensagem...">
-        <button id="sendBtn">Enviar</button>
+    
+    <div id="input-wrapper">
+        <div id="preview-container">
+            <img id="img-preview" src="" alt="Preview">
+            <button id="remove-preview">X</button>
+        </div>
+
+        <div id="input-area">
+            <label id="file-label">📷<input type="file" id="imageInput" hidden accept="image/*"></label>
+            <input type="text" id="messageInput" placeholder="Digite uma mensagem (Ctrl+V para colar imagens)...">
+            <button id="sendBtn">Enviar</button>
+        </div>
     </div>
-    <div id="imageModal"
-        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; cursor: pointer;">
-        <span
-            style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold;">&times;</span>
-        <img id="expandedImg"
-            style="max-width: 90%; max-height: 90%; border-radius: 5px; box-shadow: 0 0 20px rgba(255,255,255,0.2);">
+
+    <div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; cursor: pointer;">
+        <span style="position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold;">&times;</span>
+        <img id="expandedImg" style="max-width: 90%; max-height: 90%; border-radius: 5px; box-shadow: 0 0 20px rgba(255,255,255,0.2);">
     </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="/src/app.js"></script>
 </body>
-
 </html>
